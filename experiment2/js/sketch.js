@@ -1,67 +1,146 @@
-// sketch.js - purpose and description here
-// Author: Your Name
-// Date:
+/**
+ * CONTROLS
+ *
+ * MOUSE
+ * move mouse around          : composition speed of the picture
+ *
+ * MOUSE CLICK : Reset to random positions
+ * 
+ * KEYS
+ * DEL/BACKSPACE       : clear display
+ * s                   : save png
+ */
+'use strict';
 
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
+var NORTH = 0;
+var EAST = 1;
+var SOUTH = 2;
+var WEST = 3;
+var direction = SOUTH;
 
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
+var stepSize = 3;
+var minLength = 10;
+var diameter = 1;
+var angleCount = 7;
+var angle;
+var reachedBorder = false;
 
-// Globals
-let myInstance;
-let canvasContainer;
+var posX;
+var posY;
+var posXcross;
+var posYcross;
 
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
+var tileCount = 20;
+var actRandomSeed = 0;
 
-    myMethod() {
-        // code to run when method is called
-    }
-}
+var rectSize = 30;
 
-// setup() function is called once when the program starts
 function setup() {
-    // place our canvas, making it fit our container
-    canvasContainer = $("#canvas-container");
-    let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
-    canvas.parent("canvas-container");
-    // resize canvas is the page is resized
-    $(window).resize(function() {
-        console.log("Resizing...");
-        resizeCanvas(canvasContainer.width(), canvasContainer.height());
-    });
-    // create an instance of the class
-    myInstance = new MyClass(VALUE1, VALUE2);
+  createCanvas(600, 600);
+  colorMode(HSB, 360, 100, 100, 100);
+  background(360);
 
-    var centerHorz = windowWidth / 2;
-    var centerVert = windowHeight / 2;
+  angle = getRandomAngle(direction);
+  posX = floor(random(width));
+  posY = 5;
+  posXcross = posX;
+  posYcross = posY;
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
-    background(220);    
-    // call a method on the instance
-    myInstance.myMethod();
+  var speed = int(map(mouseX, 0, width, 0, 20));
+  for (var i = 0; i <= speed; i++) {
 
-    // Put drawings here
-    var centerHorz = canvasContainer.width() / 2 - 125;
-    var centerVert = canvasContainer.height() / 2 - 125;
-    fill(234, 31, 81);
-    noStroke();
-    rect(centerHorz, centerVert, 250, 250);
-    fill(255);
-    textStyle(BOLD);
-    textSize(140);
-    text("p5*", centerHorz + 10, centerVert + 200);
+    // ------ draw dot at current position ------
+    strokeWeight(1);
+    stroke(180, 0, 0);
+    point(posX, posY);
+
+    // ------ make step ------
+    posX += cos(radians(angle)) * stepSize;
+    posY += sin(radians(angle)) * stepSize;
+
+    // ------ check if agent is near one of the display borders ------
+    reachedBorder = false;
+
+    if (posY <= 5) {
+      direction = SOUTH;
+      reachedBorder = true;
+    } else if (posX >= width - 5) {
+      direction = WEST;
+      reachedBorder = true;
+    } else if (posY >= height - 5) {
+      direction = NORTH;
+      reachedBorder = true;
+    } else if (posX <= 5) {
+      direction = EAST;
+      reachedBorder = true;
+    }
+
+    // ------ if agent is crossing his path or border was reached ------
+    loadPixels();
+    var currentPixel = get(floor(posX), floor(posY));
+    if (
+      reachedBorder ||
+      (currentPixel[0] != 255 && currentPixel[1] != 255 && currentPixel[2] != 255)
+    ) {
+      angle = getRandomAngle(direction);
+
+      var distance = dist(posX, posY, posXcross, posYcross);
+      if (distance >= minLength) {
+        strokeWeight(3);
+        stroke(0, 0, 0);
+        line(posX, posY, posXcross, posYcross);
+      }
+
+      posXcross = posX;
+      posYcross = posY;
+    }
+  }
+  randomSeed(actRandomSeed);
+
+  for (var gridY = 0; gridY < tileCount; gridY++) {
+    for (var gridX = 0; gridX < tileCount; gridX++) {
+
+      var posX = width / tileCount * gridX;
+      var posY = height / tileCount * gridY;
+
+      var shiftX1 = mouseX / 20 * random(-1, 1);
+      var shiftY1 = mouseY / 20 * random(-1, 1);
+      var shiftX2 = mouseX / 20 * random(-1, 1);
+      var shiftY2 = mouseY / 20 * random(-1, 1);
+      var shiftX3 = mouseX / 20 * random(-1, 1);
+      var shiftY3 = mouseY / 20 * random(-1, 1);
+      var shiftX4 = mouseX / 20 * random(-1, 1);
+      var shiftY4 = mouseY / 20 * random(-1, 1);
+
+      push();
+      translate(posX, posY);
+      beginShape();
+      vertex(shiftX1, shiftY1);
+      vertex(rectSize + shiftX2, shiftY2);
+      vertex(rectSize + shiftX3, rectSize + shiftY3);
+      vertex(shiftX4, rectSize + shiftY4);
+      endShape();
+      pop();
+    }
+  }
 }
 
-// mousePressed() function is called once after every time a mouse button is pressed
+function keyReleased() {
+  if (keyCode == DELETE || keyCode == BACKSPACE) background(360);
+}
+
 function mousePressed() {
-    // code to run when mouse is pressed
+  actRandomSeed = random(100000);
+}
+
+
+function getRandomAngle(currentDirection) {
+  var a = (floor(random(-angleCount, angleCount)) + 0.5) * 90 / angleCount;
+  if (currentDirection == NORTH) return a - 90;
+  if (currentDirection == EAST) return a;
+  if (currentDirection == SOUTH) return a + 90;
+  if (currentDirection == WEST) return a + 180;
+  return 0;
 }
