@@ -4,7 +4,7 @@ function setup() {
     colorMode(HSB);
     noFill();
     strokeWeight(8);
-  }
+}
   
 function draw() {
     background(255);
