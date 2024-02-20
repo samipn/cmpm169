@@ -1,4 +1,3 @@
-p5.disableFriendlyErrors = true;
 let font1;
 let radius = 100;
 let tubeRadius = 200;
