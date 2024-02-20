@@ -1,3 +1,4 @@
+p5.disableFriendlyErrors = true;
 let font1;
 let radius = 100;
 let tubeRadius = 200;
@@ -7,6 +8,7 @@ let indexWord = 0;
 let canvas;
 let words = ['example text'];
 let num = 20;
+
 
 function setup() {
  canvas = createCanvas(1112, 834,WEBGL);
@@ -18,7 +20,9 @@ function setup() {
   textTexture.textSize(51);
   textTexture.translate(0,words.length*25);
   textAlign(CENTER, CENTER);
-  noStroke();
+  	textFont('koshy');
+
+	noStroke();
 }
 
 function draw() {
@@ -49,5 +53,6 @@ function draw() {
 		noStroke(0);
 		fill(0);
 		rect(-200, y, width, height / num);
-	}	
+	}
+	
 }
