@@ -1,67 +1,54 @@
-// sketch.js - purpose and description here
-// Author: Your Name
-// Date:
+p5.disableFriendlyErrors = true;
+let font1;
+let radius = 100;
+let tubeRadius = 200;
+let textTexture;
+let hu = 0;
+let indexWord = 0;
+let canvas;
+let words = ['example text'];
+let num = 20;
 
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
-
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
-
-// Globals
-let myInstance;
-let canvasContainer;
-
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
-
-    myMethod() {
-        // code to run when method is called
-    }
-}
-
-// setup() function is called once when the program starts
 function setup() {
-    // place our canvas, making it fit our container
-    canvasContainer = $("#canvas-container");
-    let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
-    canvas.parent("canvas-container");
-    // resize canvas is the page is resized
-    $(window).resize(function() {
-        console.log("Resizing...");
-        resizeCanvas(canvasContainer.width(), canvasContainer.height());
-    });
-    // create an instance of the class
-    myInstance = new MyClass(VALUE1, VALUE2);
-
-    var centerHorz = windowWidth / 2;
-    var centerVert = windowHeight / 2;
+ canvas = createCanvas(1112, 834,WEBGL);
+ colorMode(HSB, 255);
+  textTexture = createGraphics(2*PI*radius,2*PI*400);
+  textTexture.clear()
+  textTexture.colorMode(HSB, 100);
+  textTexture.fill(255);
+  textTexture.textSize(51);
+  textTexture.translate(0,words.length*25);
+  textAlign(CENTER, CENTER);
+  noStroke();
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
-    background(220);    
-    // call a method on the instance
-    myInstance.myMethod();
+	background(0);
+	orbitControl();
 
-    // Put drawings here
-    var centerHorz = canvasContainer.width() / 2 - 125;
-    var centerVert = canvasContainer.height() / 2 - 125;
-    fill(234, 31, 81);
-    noStroke();
-    rect(centerHorz, centerVert, 250, 250);
-    fill(255);
-    textStyle(BOLD);
-    textSize(140);
-    text("p5*", centerHorz + 10, centerVert + 200);
-}
+	let wave = (sin(frameCount * 0.005 + (0.005) * 0.005) * 1);
+	textTexture.clear();
+	
+	for(let i = 0; i <=31; i++){
+    textTexture.fill((hu + i*8)%255, 200, 255);
+		textTexture.text(words[i%3], 0, i*70);
+	}
 
-// mousePressed() function is called once after every time a mouse button is pressed
-function mousePressed() {
-    // code to run when mouse is pressed
+	push();
+	rotateZ(radians(-90));
+	rotateX(radians(90));
+	rotateY(PI/2 + frameCount*0.005);
+	push();
+	texture(textTexture);
+	cylinder(radius, 1500, 180, 1, false, false);
+
+	pop();
+	pop();
+	hu++;
+  
+  	for (let y = 0; y < height; y += height / num) {
+		noStroke(0);
+		fill(0);
+		rect(-200, y, width, height / num);
+	}	
 }
