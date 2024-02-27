@@ -1,67 +1,62 @@
-// sketch.js - purpose and description here
-// Author: Your Name
-// Date:
+let data = []
 
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
-
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
-
-// Globals
-let myInstance;
-let canvasContainer;
-
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
-
-    myMethod() {
-        // code to run when method is called
-    }
-}
-
-// setup() function is called once when the program starts
 function setup() {
-    // place our canvas, making it fit our container
-    canvasContainer = $("#canvas-container");
-    let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
-    canvas.parent("canvas-container");
-    // resize canvas is the page is resized
-    $(window).resize(function() {
-        console.log("Resizing...");
-        resizeCanvas(canvasContainer.width(), canvasContainer.height());
-    });
-    // create an instance of the class
-    myInstance = new MyClass(VALUE1, VALUE2);
+  createCanvas(410, 300)
+ 
+  data = [
+    {size:68, label:"January"},
+    {size:68, label:"February"},
+    {size:70, label:"March"},
+    {size:88, label:"April"},
+    {size:87, label:"May"},
+    {size:88, label:"June"},
+    {size:94, label:"July"},
+    {size:94, label:"August"},
+    {size:85, label:"September"},
+    {size:95, label:"October"},
+    {size:82, label:"November"},
+    {size:72, label:"December"},
+    ]
+  
+  colors = [color(55, 255, 0),
+          color(204, 255, 0),
+          color(238, 255, 0),
+          color(255, 212, 0),
+          color(255, 182, 0),
+          color(255, 157, 0),
+          color(255, 123, 0),
+          color(255, 97, 0),
+          color(255, 63, 0),
+          color(255, 16, 0)]
 
-    var centerHorz = windowWidth / 2;
-    var centerVert = windowHeight / 2;
+  noStroke()
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
-    background(220);    
-    // call a method on the instance
-    myInstance.myMethod();
-
-    // Put drawings here
-    var centerHorz = canvasContainer.width() / 2 - 125;
-    var centerVert = canvasContainer.height() / 2 - 125;
-    fill(234, 31, 81);
-    noStroke();
-    rect(centerHorz, centerVert, 250, 250);
-    fill(255);
-    textStyle(BOLD);
-    textSize(140);
-    text("p5*", centerHorz + 10, centerVert + 200);
-}
-
-// mousePressed() function is called once after every time a mouse button is pressed
-function mousePressed() {
-    // code to run when mouse is pressed
+  background('green')
+  textSize(20)
+  fill(255)
+  textStyle(BOLD)
+  text('Highest Temperature 2023 (Santa Cruz)',30,40)
+  textSize(12)
+  push()
+  translate(55,210)
+  data.forEach((el,i) => {
+      push()
+  		translate(i * 25, 0)
+      let c = floor(map(el.size,23,99,0,9))
+    	fill(colors[c])
+      rect(0,0,20,-el.size*1.5)
+      fill(28, 110, 127)
+    	push()
+      translate(0,10)
+      text(el.size,3.5,-18)
+      rotate(HALF_PI)
+      fill(255)
+      textStyle(ITALIC)
+      text(el.label,0,-6)
+    	pop()
+  		pop()
+	})
+  pop()
 }
